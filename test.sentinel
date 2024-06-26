@@ -8,7 +8,7 @@ allowed_types = ["t2.small", "t2.medium", "t2.large"]
 
 # Get all EC2 instances
 allEC2Instances = [
-  instance
+  instance,
   for instance in tfplan.resources
   if instance.type == "aws_instance"
 ]
