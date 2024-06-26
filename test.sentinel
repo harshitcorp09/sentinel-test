@@ -4,19 +4,20 @@
 import "tfplan/v2" as tfplan
 
 # Allowed EC2 Instance Types
-# Include "null" to allow missing or computed values
 allowed_types = ["t2.small", "t2.medium", "t2.large"]
 
 # Get all EC2 instances
-allEC2Instances = filter tfplan.resources.aws_instance as _, instances {
-  all true
-}
+allEC2Instances = [
+  for instance in tfplan.resources.aws_instance :
+    instance if instance.type == "aws_instance"
+]
 
 # Filter to EC2 instances with violations
-violatingEC2Instances = filter allEC2Instances as _, instance {
-  instance_type = instance.config.instance_type
-  not contains(allowed_types, instance_type)
-}
+violatingEC2Instances = [
+  instance
+  for instance in allEC2Instances
+  if instance.attributes.instance_type not contains allowed_types
+]
 
 # Count violations
 violations = length(violatingEC2Instances)
