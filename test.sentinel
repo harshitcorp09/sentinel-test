@@ -4,8 +4,8 @@ import "tfplan/v2" as plan
 main = rule {
     # Access Terraform plan data
     instances = plan.resources["aws_instance"]
-    
-    # Check if instances are of allowed types
+
+    # Check if all instances are of allowed types
     all_in_allowed_types(instances[*].attributes.instance_type)
 }
 
@@ -14,7 +14,7 @@ allowed_types = ["t2.small", "t2.medium", "t2.large"]
 
 # Function to check if all instances are in allowed types
 all_in_allowed_types(types) {
-    all type in types {
+    all types as type {
         type is allowed_types[_]
     }
 }
