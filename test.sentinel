@@ -1,9 +1,8 @@
 import "tfplan"
 
 main = rule {
-    all tfplan.resources.aws_instance.exampleTFE as _, instances {
-        all instances as _, r {
-            r.applied.instance_type != "t2.micro"
-        }
+    all tfplan.resources as _, r {
+        r.type is "aws_instance" and
+        r.applied.instance_type == "t2.micro"
     }
 }
