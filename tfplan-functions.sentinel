@@ -1,0 +1,30 @@
+import "tfplan/v2" as tfplan
+
+# Function to find resources of a specific type
+find_resources = func(type) {
+  return filter tfplan.resource_changes as _, rc {
+    rc.type is type
+  }
+}
+
+# Function to filter resources based on attribute values not in the allowed list
+filter_attribute_not_in_list = func(resources, attribute, allowed_list, warn) {
+  violations = []
+
+  for resources as r {
+    if not (r.change.after[attribute] in allowed_list) {
+      violations.append({
+        "resource": r,
+        "attribute": attribute,
+        "value": r.change.after[attribute],
+      })
+    }
+  }
+
+  return {
+    "violations": violations,
+    "messages": violations.map(violations as v {
+      sprintf("Resource %s has invalid %s: %s", v.resource.address, v.attribute, v.value)
+    })
+  }
+}
