@@ -3,7 +3,6 @@
 
 # Import the tfplan-functions module
 import "tfplan"
-import "string"
 
 # Allowed EC2 Instance Types
 # Include "null" to allow missing or computed values
