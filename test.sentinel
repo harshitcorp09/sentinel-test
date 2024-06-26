@@ -1,20 +1,9 @@
-import "tfplan/v2" as plan
+import "tfplan"
 
-# Define the main rule
 main = rule {
-    # Access Terraform plan data
-    instances = plan.resources["aws_instance"]
-
-    # Check if all instances are of allowed types
-    all_in_allowed_types(instances[*].attributes.instance_type)
-}
-
-# Allowed EC2 Instance Types
-allowed_types = ["t2.small", "t2.medium", "t2.large"]
-
-# Function to check if all instances are in allowed types
-all_in_allowed_types(types) {
-    all types as type {
-        type is allowed_types[_]
+    all tfplan.resources.aws_instance.exampleTFE as _, instances {
+        all instances as _, r {
+            r.applied.instance_type != "t2.micro"
+        }
     }
 }
